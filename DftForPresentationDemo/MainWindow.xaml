@@ -1,0 +1,32 @@
+﻿<Window x:Class="DftForPresentationDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DftForPresentationDemo"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="237.254" Width="408.333">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="label" Content="Параметры" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.225,0.077"/>
+        <Label x:Name="label1" Content="Количество узлов сетки N&#xD;&#xA;" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="160" Height="26"/>
+        <Label x:Name="label1_Copy" Content="Порядок частичной суммы n" HorizontalAlignment="Left" Margin="10,113,0,0" VerticalAlignment="Top" Width="171"/>
+        <Button x:Name="btn_N_minus" Content="-" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="30" FontSize="24" Height="36" FontWeight="Bold" Click="btn_N_minus_Click"/>
+        <Button x:Name="btn_N_plus" Content="+" HorizontalAlignment="Left" Margin="151,72,0,0" VerticalAlignment="Top" Width="30" FontSize="24" Height="36" FontWeight="Bold" Click="btn_N_plus_Click"/>
+        <Label x:Name="lbl_N" Content="16" HorizontalAlignment="Left" Margin="45,72,0,0" VerticalAlignment="Top" Height="36" Width="101" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="21.333"/>
+        <TextBox x:Name="txt_n" HorizontalAlignment="Left" Height="23" Margin="10,144,0,0" TextWrapping="Wrap" Text="8" VerticalAlignment="Top" Width="171" TextChanged="textBox_TextChanged" KeyDown="txt_n_KeyDown" LostFocus="txt_n_LostFocus"/>
+        <Button x:Name="btn_draw_Copy" Content="Нарисовать ДПФ" HorizontalAlignment="Left" Margin="10,172,0,0" VerticalAlignment="Top" Width="171" Height="26" Click="button_Click"/>
+        <Button x:Name="btn_draw_abs" Content="|x|" HorizontalAlignment="Left" Margin="220,16,0,0" VerticalAlignment="Top" Width="137" Click="btn_draw_abs_Click"/>
+        <Button x:Name="btn_draw_sign" Content="sign x" HorizontalAlignment="Left" Margin="220,41,0,0" VerticalAlignment="Top" Width="137" Click="btn_draw_sign_Click"/>
+        <Button x:Name="btn_draw_chain" Content="Случайная ломаная" HorizontalAlignment="Left" Margin="220,66,0,0" VerticalAlignment="Top" Width="137" Click="btn_draw_chain_Click"/>
+        <TextBlock x:Name="txt_m" HorizontalAlignment="Left" Margin="354,95,0,0" TextWrapping="Wrap" Text="6" VerticalAlignment="Top" Width="36"/>
+        <TextBlock x:Name="txt_min" HorizontalAlignment="Left" Margin="354,127,0,0" TextWrapping="Wrap" Text="-2" VerticalAlignment="Top" Width="36"/>
+        <TextBlock x:Name="txt_max" HorizontalAlignment="Left" Margin="354,158,0,0" TextWrapping="Wrap" Text="3" VerticalAlignment="Top" Width="36"/>
+        <Label x:Name="label_Copy" Content="Количество звеньев" HorizontalAlignment="Left" Margin="220,91,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.225,0.077"/>
+        <Label x:Name="label_Copy1" Content="Max" HorizontalAlignment="Left" Margin="220,122,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.225,0.077"/>
+        <Label x:Name="label_Copy2" Content="Min" HorizontalAlignment="Left" Margin="220,153,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.225,0.077"/>
+
+    </Grid>
+</Window>
