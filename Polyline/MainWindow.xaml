@@ -16,14 +16,14 @@
         <Label x:Name="label_Copy1" Content="max y=" HorizontalAlignment="Left" Margin="219,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txt_Dens" HorizontalAlignment="Left" Height="23" Margin="118,72,0,0" TextWrapping="Wrap" Text="1000" VerticalAlignment="Top" Width="50"/>
         <Label x:Name="label_Copy2" Content="Густота сетки =" HorizontalAlignment="Left" Margin="10,68,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txt_n" HorizontalAlignment="Left" Height="23" Margin="118,103,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="50"/>
+        <TextBox x:Name="txt_n" HorizontalAlignment="Left" Height="23" Margin="118,103,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="50"/>
         <Label x:Name="label_Copy3" Content="Порядок S_n =" HorizontalAlignment="Left" Margin="10,99,0,0" VerticalAlignment="Top"/>
         <Button x:Name="btn_generate_S_n" Content="Сгенерировать S_n" HorizontalAlignment="Left" Margin="9,131,0,0" VerticalAlignment="Top" Width="167" Click="btn_generate_S_n_Click"/>
         <Label x:Name="label_Copy4" Content="Номер слагаемого для остатка" HorizontalAlignment="Left" Margin="10,156,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txt_j_to_skip" HorizontalAlignment="Left" Height="23" Margin="10,187,0,0" TextWrapping="Wrap" Text="-1" VerticalAlignment="Top" Width="50"/>
-        <TextBox x:Name="txt_DFT_N" HorizontalAlignment="Left" Height="23" Margin="261,72,0,0" TextWrapping="Wrap" Text="30" VerticalAlignment="Top" Width="50"/>
+        <TextBox x:Name="txt_DFT_N" HorizontalAlignment="Left" Height="23" Margin="261,72,0,0" TextWrapping="Wrap" Text="100" VerticalAlignment="Top" Width="50"/>
         <Label x:Name="label_Copy5" Content="N for DFT =" HorizontalAlignment="Left" Margin="188,68,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txt_DFT_n" HorizontalAlignment="Left" Height="23" Margin="261,104,0,0" TextWrapping="Wrap" Text="15" VerticalAlignment="Top" Width="50"/>
+        <TextBox x:Name="txt_DFT_n" HorizontalAlignment="Left" Height="23" Margin="261,104,0,0" TextWrapping="Wrap" Text="20" VerticalAlignment="Top" Width="50"/>
         <Label x:Name="label_Copy6" Content="n for DFT =" HorizontalAlignment="Left" Margin="188,100,0,0" VerticalAlignment="Top"/>
 
     </Grid>

@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-//using static.System.Math;
+using static System.Math;
 
 namespace Polyline
 {
@@ -25,15 +25,13 @@ namespace Polyline
     public partial class MainWindow : Window
     {
         GraphBuilder2DForm gb = new GraphBuilder2DForm(2);
-        DiscreteFunction2D df;
         Plot2D plot_polyline = new Plot2D("Polyline");
         Plot2D plot_discrete_polyline = new Plot2D("Discrete Polyline");
-        Plot2D plot_check_alpha_beta = new Plot2D("Check alpha and beta");
         Plot2D plot_fourier = new Plot2D("Fourier");
         Plot2D plot_dft = new Plot2D("DFT");
         Plot2D plot_fourier_diff = new Plot2D("Fourier diff");
         Plot2D plot_calculated_fourier_diff = new Plot2D("Calculated Fourier Diff");
-        Plot2D plot_calculated_dft_diff = new Plot2D("Calculated DFT Diff");
+        Plot2D plot_dft_diff = new Plot2D("DFT Diff");
 
         Plot2D plot_uniform_estimate = new Plot2D("Uniform diff estimate");
 
@@ -57,12 +55,11 @@ namespace Polyline
             InitializeComponent();
             gb.GraphBuilder.DrawPlot(plot_polyline);
             gb.GraphBuilder.DrawPlot(plot_discrete_polyline);
-            gb.GraphBuilder.DrawPlot(plot_check_alpha_beta);
             gb.GraphBuilder.DrawPlot(plot_fourier);
             gb.GraphBuilder.DrawPlot(plot_dft);
             gb.GetGraphBuilder(1).DrawPlot(plot_fourier_diff);
             gb.GetGraphBuilder(1).DrawPlot(plot_calculated_fourier_diff);
-            gb.GetGraphBuilder(1).DrawPlot(plot_calculated_dft_diff);
+            gb.GetGraphBuilder(1).DrawPlot(plot_dft_diff);
             gb.GetGraphBuilder(1).DrawPlot(plot_uniform_estimate);
             gb.Show();
         }
@@ -109,7 +106,7 @@ namespace Polyline
             return b_k;
         }
 
-        private void btn_generate_polyline_Click(object sender, RoutedEventArgs e)
+        void generatePolyline()
         {
             m = int.Parse(txt_m.Text);
             min_y = double.Parse(txt_min_y.Text);
@@ -139,7 +136,15 @@ namespace Polyline
                 alpha_polyline[i] = (y2 - y1) / (x2 - x1);
                 beta_polyline[i] = y1 - alpha_polyline[i] * x1;
             }
+        }
 
+        private void btn_generate_polyline_Click(object sender, RoutedEventArgs e)
+        {
+            generatePolyline();
+        }
+
+        private void btn_generate_S_n_Click(object sender, RoutedEventArgs e)
+        {
             //Generating discrete polyline
             int N = int.Parse(txt_DFT_N.Text);
             int currentSegment = 0;
@@ -158,30 +163,10 @@ namespace Polyline
             plot_discrete_polyline.DiscreteFunction = new DiscreteFunction2D(x_discrete_polyline, y_discrete_polyline);
             plot_discrete_polyline.Refresh();
 
-            ////Cheking alpha and beta
-            //int currentSegment = 0;
-            //double[] check_x = new double[m * 1000 + 1];
-            //double[] check_y = new double[m * 1000 + 1];
-
-            //for (int i = 0; i <= m * 1000; i++)
-            //{
-            //    double x = Math.PI * 2.0 * i / (m * 1000.0) - Math.PI;
-            //    check_x[i] = x;
-            //    while (x > x_polyline[currentSegment+1])
-            //        currentSegment++;
-            //    check_y[i] = alpha_polyline[currentSegment] * x + beta_polyline[currentSegment];
-            //}
-
-            //plot_check_alpha_beta.DiscreteFunction = new DiscreteFunction2D(check_x, check_y);
-            //plot_check_alpha_beta.Refresh();
-        }
-
-        private void btn_generate_S_n_Click(object sender, RoutedEventArgs e)
-        {
             //Checking Fourier series
             //Вычисляем частичную сумму ряда Фурье
             int Dens = int.Parse(txt_Dens.Text);
-            int n = int.Parse(txt_n.Text);
+            int n_fourier = int.Parse(txt_n.Text);
 
             double[] x_fourier = new double[Dens + 1];
             double[] y_fourier = new double[Dens + 1];
@@ -206,7 +191,7 @@ namespace Polyline
                 y += a0;
 
                 double sum_k = 0;
-                for (int k = 1; k <= n; k++)
+                for (int k = 1; k <= n_fourier; k++)
                 {
                     double sum_j = 0;
                     for (int j = 0; j < m; j++)
@@ -234,30 +219,71 @@ namespace Polyline
             plot_fourier.Refresh();
 
             //Вычисляем дискретную сумму ряда Фурье на густой сетке
-            int N = y_discrete_polyline.Length;
+            int n = int.Parse(txt_DFT_n.Text);
 
             var tr = new Transformers.FastFourierTransformer();
             var forward = tr.Transform(y_discrete_polyline);
 
-            var y_inverse = tr.InvTransform(forward).Select(x => Math.Sqrt(x.x * x.x + x.y * x.y)).ToArray();
+            var forward_partial = new alglib.complex[forward.Length];
 
-            double[] x_inverse = new double[y_discrete_polyline.Length];
-
-            var x_inverse_added = ;
-
-            for (int i = 0; i < N; i++)
+            for (int i = 0; i < forward_partial.Length; i++)
             {
-                x_inverse[i] = 2.0 * Math.PI * i / N;
+                var deg = Min(i, N - i);
+                forward_partial[i] = deg <= n ? forward[i] : new alglib.complex(0);
+            }
+
+            var left = forward_partial.Take((N + 1)/2).ToArray();
+            var right = forward_partial.Skip((N + 1) / 2).ToArray();
+
+            var zeros = new List<alglib.complex>();
+            var dens = 1;
+            while (dens < Dens) dens *= 2;
+
+            var zerosCount = dens - forward.Length;
+            while (zeros.Count < zerosCount) zeros.Add(new alglib.complex(0, 0));
+
+            var forwardDense_list = new List<alglib.complex>();
+            forwardDense_list.AddRange(left);
+            forwardDense_list.AddRange(zeros);
+            forwardDense_list.AddRange(right);
+
+            var forwardDense = forwardDense_list.Select(x => x * dens / 2).ToArray();
+
+            
+            
+            var y_inverse = tr.InvTransform(forwardDense).Select(x => x.x).ToArray();
+
+            double[] x_inverse = new double[y_inverse.Length];
+
+            for (int i = 0; i < y_inverse.Length; i++)
+            {
+                x_inverse[i] = 2.0 * PI * i / y_inverse.Length - PI;
             }
 
             plot_dft.DiscreteFunction = new DiscreteFunction2D(x_inverse, y_inverse);
+            plot_dft.Refresh();
 
+            //Diff df - dft
+            double[] dft_diff = new double[y_inverse.Length];
+            currentSegment = 0;
+
+            for (int i = 0; i < dft_diff.Length; i++)
+            {
+                double x = x_inverse[i];
+                while (x > x_polyline[currentSegment + 1])
+                    currentSegment++;
+                double y = alpha_polyline[currentSegment] * x + beta_polyline[currentSegment];
+                dft_diff[i] = y - y_inverse[i];
+            }
+
+            plot_dft_diff.DiscreteFunction = new DiscreteFunction2D(x_inverse, dft_diff);
+            plot_dft_diff.Refresh();
 
 
             //Diff f - fourier
             //Берем разность функции и вычисленного выше ряда Фурье
             double[] diff = new double[Dens + 1];
-            int currentSegment = 0;
+            currentSegment = 0;
 
             for (int i = 0; i <= Dens; i++)
             {
@@ -305,6 +331,7 @@ namespace Polyline
             //    calculated_diff_y[i] = sum_k;
             //}
 
+            //Working, but commented
             for (int i = 0; i <= Dens; i++)
             {
                 double x = Math.PI * 2.0 * i / Dens - Math.PI;
@@ -314,7 +341,7 @@ namespace Polyline
                 {
                     if (j_skipped != -1 && j != j_skipped) continue;
                     double sum_k = 0;
-                    for (int k = n + 1; k <= 1000 + n + 1; k++)
+                    for (int k = n_fourier + 1; k <= 1000 + n_fourier + 1; k++)
                     {
                         sum_k += Math.Cos(k * (ksi[j] - x)) / (k * k);
                     }
@@ -382,8 +409,8 @@ namespace Polyline
             //    calculated_dft_diff_y[i] = R;
             //}
 
-            //plot_calculated_dft_diff.DiscreteFunction = new DiscreteFunction2D(calculated_dft_diff_x, calculated_dft_diff_y);
-            //plot_calculated_dft_diff.Refresh();
+            //plot_dft_diff.DiscreteFunction = new DiscreteFunction2D(calculated_dft_diff_x, calculated_dft_diff_y);
+            //plot_dft_diff.Refresh();
 
             //Calculating uniform estimate
             double[] calculated_diff_esimate_uniform_x = new double[2];
@@ -392,7 +419,7 @@ namespace Polyline
             calculated_diff_esimate_uniform_x[0] = -Math.PI;
             calculated_diff_esimate_uniform_x[1] = Math.PI;
 
-            double est = 1.0 / Math.PI / n;
+            double est = 1.0 / Math.PI / n_fourier;
             double est_sum_j = 0;
             for (int j = 1; j < m; j++)
             {
